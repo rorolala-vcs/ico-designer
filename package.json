@@ -1,0 +1,43 @@
+{
+  "name": "ico-designer",
+  "version": "1.0.0",
+  "description": "Declarative TOML-driven icon designer with a visual editor",
+  "main": "src/cli.js",
+  "bin": {
+    "ico-designer": "src/cli.js"
+  },
+  "scripts": {
+    "editor": "node src/cli.js editor",
+    "dev": "node src/cli.js editor",
+    "start": "node src/cli.js editor",
+    "generate": "node src/cli.js generate",
+    "build": "node src/cli.js generate",
+    "new": "node src/cli.js new",
+    "list": "node src/cli.js list"
+  },
+  "keywords": [
+    "icon",
+    "designer",
+    "toml",
+    "sharp",
+    "svg"
+  ],
+  "author": "RoroLala VCS",
+  "license": "MIT",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=20.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rorolala-vcs/ico-designer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rorolala-vcs/ico-designer/issues"
+  },
+  "homepage": "https://github.com/rorolala-vcs/ico-designer#readme",
+  "dependencies": {
+    "sharp": "^0.35.5",
+    "smol-toml": "^1.9.1"
+  }
+}
