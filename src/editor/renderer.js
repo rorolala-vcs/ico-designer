@@ -496,7 +496,11 @@
       const canvas = makeCanvas(size, size);
       const ctx = canvas.getContext("2d");
       ctx.putImageData(out, 0, 0);
+      // efx is a Photoshop-style Overlay shading layer, not a normal alpha layer.
+      ctx.save();
+      ctx.globalCompositeOperation = "overlay";
       ctx.drawImage(efx, 0, 0);
+      ctx.restore();
       this.baseCache = { key: baseKey, canvas };
       return canvas;
     }

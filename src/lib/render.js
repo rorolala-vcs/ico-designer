@@ -12,7 +12,7 @@ const {
 } = require("./assets");
 const { buildFill } = require("./fill");
 
-const RENDER_VERSION = "1.0.0";
+const RENDER_VERSION = "1.1.0";
 
 function xmlEscape(value) {
   return String(value)
@@ -104,6 +104,35 @@ function overlayLayer(dst, src, size) {
     dst[i + 2] = Math.round(
       (src[i + 2] * sa + dst[i + 2] * da * (1 - sa)) / oa,
     );
+    dst[i + 3] = Math.round(oa * 255);
+  }
+}
+
+function overlayChannel(backdrop, source) {
+  return backdrop <= 0.5
+    ? 2 * backdrop * source
+    : 1 - 2 * (1 - backdrop) * (1 - source);
+}
+
+/** Photoshop-style Overlay blend (W3C separable blend + source-over). */
+function overlayBlendLayer(dst, src) {
+  for (let i = 0; i < dst.length; i += 4) {
+    const sa = src[i + 3] / 255;
+    if (sa <= 0) continue;
+    const da = dst[i + 3] / 255;
+    const oa = sa + da * (1 - sa);
+    if (oa <= 0) {
+      dst[i + 3] = 0;
+      continue;
+    }
+    for (let c = 0; c < 3; c++) {
+      const s = src[i + c] / 255;
+      const b = dst[i + c] / 255;
+      const blended = overlayChannel(b, s);
+      const sourceColor = (1 - da) * s + da * blended;
+      const co = sa * sourceColor + da * (1 - sa) * b;
+      dst[i + c] = Math.round((co / oa) * 255);
+    }
     dst[i + 3] = Math.round(oa * 255);
   }
 }
@@ -275,7 +304,7 @@ async function renderConfig(config, options = {}) {
   });
 
   const out = colorizeBase(base.data, id.data, fillByKey, size);
-  overlayLayer(out, efx.data, size);
+  overlayBlendLayer(out, efx.data);
 
   const svg = await stickerSvg(config, size, assetDir);
   if (svg) {
